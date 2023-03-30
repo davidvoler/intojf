@@ -16,6 +16,8 @@ services:
       nofile:
         soft: 32000
         hard: 40000
+    networks:
+      - build_tools
   jenkins:
     image: jenkins/jenkins:lts
     privileged: true
@@ -27,31 +29,42 @@ services:
     volumes:
      - ./data/jenkins/jenkins_configuration:/var/jenkins_home
      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - build_tools
   fluentd:
-    build: ./fluentd
+    image: fluentd:latest
+    container_name: fluentd
     volumes:
-      - ./fluentd/conf:/fluentd/etc
+      - ./conf/fluentd:/fluentd/etc
     links:
       - "elasticsearch"
     ports:
       - "24224:24224"
       - "24224:24224/udp"
+    networks:
+      - elk
+      - build_tools
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
+    image: elasticsearch:8.6.2
     container_name: elasticsearch
     environment:
-      - "discovery.type=single-node"
+      - discovery.type=single-node
     expose:
       - "9200"
     ports:
       - "9200:9200"
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - elk
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.13.1
+    image: kibana:8.6.2
     links:
       - "elasticsearch"
     ports:
       - "5601:5601"
-
+    networks:
+      - elk
   haproxy:
     hostname: haproxy
     image:  haproxy:latest
@@ -59,3 +72,10 @@ services:
       - 8888:8888
     volumes:
       - ./conf/haproxy:/usr/local/etc/haproxy:ro
+    networks:
+      - elk
+networks:
+  elk:
+    driver: bridge
+  build_tools:
+    driver: bridge  
