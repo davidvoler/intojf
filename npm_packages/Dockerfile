@@ -1,6 +1,6 @@
 FROM node:16.13.1
 
-RUN npm install -g @angular/cli@
+RUN npm install -g @angular/cli
 RUN mkdir /ng-app
 
 WORKDIR /ng-app
