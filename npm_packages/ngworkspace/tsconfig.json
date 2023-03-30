@@ -15,6 +15,9 @@
       ],
       "lib2": [
         "dist/lib2"
+      ],
+      "lib3": [
+        "dist/lib3"
       ]
     },
     "noFallthroughCasesInSwitch": true,

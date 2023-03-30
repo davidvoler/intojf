@@ -4,7 +4,7 @@ RUN npm install -g @angular/cli
 RUN mkdir /ng-app
 
 WORKDIR /ng-app
-COPY ./ ./
+COPY ngworkspace .
 
 
 
@@ -14,9 +14,9 @@ RUN ng build lib1
 RUN ng build lib2
 RUN ng build lib3
 
-RUN cp ./.npmrc_push ./dist/lib1/.npmrc
-RUN cp ./.npmrc_push ./dist/lib1/.npmrc
-RUN cp ./.npmrc_push ./dist/lib1/.npmrc
+RUN cp ./.npmrc ./dist/lib1/.npmrc
+RUN cp ./.npmrc ./dist/lib2/.npmrc
+RUN cp ./.npmrc ./dist/lib3/.npmrc
 
 #3. push libraries to the npm
 RUN cd /ng-app/dist/lib1
