@@ -1,0 +1,1 @@
+from app_config.config import get_configs

@@ -1,0 +1,31 @@
+node {
+  try {
+    def version = null; 
+    def tag = null;
+    def gitCommit = null;
+    def release = null;
+    def repoHost = "artifactory.local"
+    def repoName = "python_packages"
+    
+    stage ('Checkout and Tag') {
+      checkout scm
+      sh 'env'
+      gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+      release = env.BRANCH_NAME ;
+      version = "${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+      tag = "${release}.${env.BUILD_NUMBER}";
+      latest = "${env.BRANCH_NAME}-latest";
+    }
+    stage ('Build docker images') { 
+        // Build docker image - this will push to the private pip registry
+        //TODO: Add a parameter to build the pip with version number
+        sh "docker build -t ${repoHost}${repoName}:${tag} -f Dockerfile ."
+
+    }
+
+    
+  } catch (e) {
+    throw e
+  }
+  
+}
